@@ -189,6 +189,45 @@
     .speak-btn.playing svg { stroke: #fff; }
     .no-tts .speak-btn { display: none; }
 
+    /* ─── 回到頂部按鈕 ─── */
+.back-to-top-btn {
+  position: fixed;
+  bottom: calc(var(--nav-h) + env(safe-area-inset-bottom) + 20px); /* 確保在底部導覽列上方 */
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  background: var(--gold);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(184, 147, 90, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 999; /* 低於底部導覽列的 1000 */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+}
+
+.back-to-top-btn.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.back-to-top-btn:active {
+  transform: translateY(2px) scale(0.95);
+  box-shadow: 0 2px 6px rgba(184, 147, 90, 0.2);
+}
+
+.back-to-top-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
     /* BOTTOM NAV */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: var(--nav-h); padding-bottom: env(safe-area-inset-bottom); background: rgba(255,255,255,0.97); border-top: 1px solid rgba(0,0,0,0.07); display: flex; justify-content: space-around; align-items: stretch; z-index: 1000; box-shadow: 0 -4px 20px rgba(0,0,0,0.04); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
     .nav-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; height: 100%; color: #aaa; font-size: 10.5px; font-weight: 500; letter-spacing: 0.04em; gap: 5px; border: none; background: transparent; cursor: pointer; transition: color 0.2s; padding-bottom: 2px; }
@@ -911,7 +950,26 @@ async function fetchWeather() {
 }
 
 document.addEventListener('DOMContentLoaded', fetchWeather);
+/* ─── 回到頂部按鈕邏輯 ─── */
+const backToTopBtn = document.getElementById("backToTopBtn");
 
+// 監聽視窗捲動事件
+window.addEventListener("scroll", () => {
+  // 當往下捲動超過 300px 時，顯示按鈕
+  if (window.scrollY > 300) {
+    backToTopBtn.classList.add("show");
+  } else {
+    backToTopBtn.classList.remove("show");
+  }
+});
+
+// 點擊回到頂部
+function scrollToTop() {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth" // 平滑捲動
+  });
+}
 /* ─── 日文語音播放 ─── */
 let currentBtn = null;
 
@@ -947,5 +1005,11 @@ function speak(text, btn) {
 
 speechSynthesis.onvoiceschanged = () => { speechSynthesis.getVoices(); };
 </script>
+<!-- === 回到頂部懸浮按鈕 === -->
+<button id="backToTopBtn" class="back-to-top-btn" onclick="scrollToTop()" title="回到頂部">
+  <svg viewBox="0 0 24 24">
+    <path d="M12 4l-8 8h6v8h4v-8h6z"/>
+  </svg>
+</button>
 </body>
 </html>
